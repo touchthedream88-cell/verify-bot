@@ -1,0 +1,41 @@
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    const quiz = [
+        { q: "12 + 8", a: 20 }, { q: "15 - 7", a: 8 },
+        { q: "9 + 6", a: 15 }, { q: "20 - 5", a: 15 }
+    ];
+
+    const currentQuiz = quiz[Math.floor(Math.random() * quiz.length)];
+    document.getElementById('question').innerText = currentQuiz.q + " = ?";
+
+    async function check() {
+        const userAns = document.getElementById('answer').value;
+        const status = document.getElementById('status');
+        
+        // --- THÔNG TIN QUAN TRỌNG ---
+        const botToken = '8411573220:AAEYoyJZPe8XGhE0IlWNc8YTb8BWBHrN8Uk';
+        const userId = tg.initDataUnsafe.user.id;
+
+        if (parseInt(userAns) === currentQuiz.a) {
+            status.innerText = "⏳ Đang xác minh...";
+            status.style.color = "blue";
+
+            try {
+                // Gửi lệnh ngầm để Bot biết đã xác minh xong
+                const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${userId}&text=XACMINH_THANHCONG`;
+                await fetch(url);
+                
+                status.innerText = "✅ Thành công! Quay lại Bot ngay.";
+                status.style.color = "green";
+                setTimeout(() => { tg.close(); }, 1000);
+            } catch (e) {
+                alert("Lỗi mạng, hãy thử lại!");
+            }
+        } else {
+            status.innerText = "❌ Sai rồi!";
+            status.style.color = "red";
+        }
+    }
+</script>
